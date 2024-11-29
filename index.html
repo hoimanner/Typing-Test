@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background-color: #f0f0f5;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #4a4a4a;
+        }
+
+        body.dark h1 {
+            color: #e0e0e0;
+        }
+
+        #sentence {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border: 2px dashed #4a90e2;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        body.dark #sentence {
+            background-color: #2a2a2a;
+            border-color: #007bff;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid #4a90e2;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        body.dark input {
+            border-color: #007bff;
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1.2em;
+            color: #ffffff;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        body.dark button {
+            background-color: #007bff;
+        }
+
+        button:hover {
+            background-color: #007bff;
+            transform: translateY(-2px);
+        }
+
+        body.dark button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        body.dark #result {
+            color: #66b3ff;
+        }
+
+        #modeToggle {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        body.dark #modeToggle {
+            background-color: #007bff;
+        }
+
+        #modeToggle:hover {
+            background-color: #007bff;
+            transform: translateY(-2px);
+        }
+
+        body.dark #modeToggle:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fruit Typing Speed Test</h1>
+    <button id="modeToggle">Switch to Dark Mode</button>
+    <div id="sentence">Type the sentence that appears here!</div>
+    <input type="text" id="input" placeholder="Start typing..." />
+    <button id="start">Start Test</button>
+    <div id="result"></div>
+    
+    <script>
+        const words = [
+            "apple", "banana", "grape", "orange", "kiwi",
+            "mango", "peach", "cherry", "pear", "plum",
+            "strawberry", "blueberry", "pineapple", "coconut", 
+            "watermelon", "lemon", "lime", "papaya", "fig", "date"
+        ];
+
+        const sentenceElement = document.getElementById('sentence');
+        const inputElement = document.getElementById('input');
+        const startButton = document.getElementById('start');
+        const resultDiv = document.getElementById('result');
+        const modeToggle = document.getElementById('modeToggle');
+        let startTime;
+        let endTime;
+        let isDarkMode = false;
+
+        // Function to generate a random sentence
+        function getRandomSentence(wordCount) {
+            let sentence = [];
+            for (let i = 0; i < wordCount; i++) {
+                const randomIndex = Math.floor(Math.random() * words.length);
+                sentence.push(words[randomIndex]);
+            }
+            return sentence.join(' ') + '.';
+        }
+
+        startButton.addEventListener('click', () => {
+            const sentence = getRandomSentence(5); // Generates a sentence with 5 random words
+            sentenceElement.textContent = sentence;
+            inputElement.value = '';
+            inputElement.focus();
+            resultDiv.textContent = '';
+            startTime = new Date().getTime();
+
+            inputElement.addEventListener('keyup', checkTyping);
+        });
+
+        function checkTyping() {
+            const typedText = inputElement.value;
+            const sentence = sentenceElement.textContent;
+
+            if (typedText === sentence) {
+                endTime = new Date().getTime();
+                const timeTaken = (endTime - startTime) / 1000; // in seconds
+                const wpm = (sentence.split(' ').length / timeTaken) * 60;
+                resultDiv.textContent = `Congratulations! You typed it in ${timeTaken.toFixed(2)} seconds. Your typing speed is ${Math.round(wpm)} WPM.`;
+                inputElement.removeEventListener('keyup', checkTyping);
+            }
+        }
+
+        // Toggle dark and light mode
+        modeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark', isDarkMode);
+            modeToggle.textContent = isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode";
+        });
+    </script>
+</body>
+</html>
